@@ -21,36 +21,40 @@ enum Role {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  name         String
-  email        String         @unique
-  password     String
-  role         Role           @default(USER)
-  isVerified   Boolean        @default(false)
-  Registration Registration[]
-  Event        Event[]
+  id         String     @id @default(uuid())
+  name       String
+  email      String     @unique
+  password   String
+  role       Role       @default(USER)
+  isVerified Boolean    @default(false)
+  Event      Event[]
+  Attendee   Attendee[]
 
   @@index([id])
   @@map("users")
 }
 
 model Event {
-  id             String @id @default(uuid())
+  id             String     @id @default(uuid())
   name           String
   date           String
   location       String
   maxAttendees   Int
   createdBy      String
-  organizerEmail String @map("organizer_email")
-  User           User   @relation(fields: [organizerEmail], references: [email])
+  organizerEmail String     @map("organizer_email")
+  User           User       @relation(fields: [organizerEmail], references: [email])
+  Attendee       Attendee[]
 
   @@index([id])
   @@map("event")
 }
 
-model Registration {
-  id            String @id @default(uuid())
-  eventName     String
+model Attendee {
+  id String @id @default(uuid())
+
+  eventId String @map("event_id")
+  Event   Event  @relation(fields: [eventId], references: [id])
+
   attendeeName  String
   attendeePhone String
 
@@ -58,5 +62,5 @@ model Registration {
   User          User   @relation(fields: [attendeeEmail], references: [email])
 
   @@index([id])
-  @@map("registration")
+  @@map("attendee")
 }
