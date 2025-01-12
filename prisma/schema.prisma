@@ -28,18 +28,21 @@ model User {
   role         Role           @default(USER)
   isVerified   Boolean        @default(false)
   Registration Registration[]
+  Event        Event[]
 
   @@index([id])
   @@map("users")
 }
 
 model Event {
-  id           String @id @default(uuid())
-  name         String
-  date         String
-  location     String
-  maxAttendees Int
-  createdBy    String
+  id             String @id @default(uuid())
+  name           String
+  date           String
+  location       String
+  maxAttendees   Int
+  createdBy      String
+  organizerEmail String @map("organizer_email")
+  User           User   @relation(fields: [organizerEmail], references: [email])
 
   @@index([id])
   @@map("event")
