@@ -4,6 +4,8 @@ import prisma from '../../../prisma-client/prisma'
 import ApiError from '../../middlewares/apiError'
 import httpStatus from 'http-status'
 import QueryBuilder from '../../builder/QueryBuilder'
+import { decreaseEventAttendee } from './attendee.utlis'
+import { io } from '../../../server'
  
 
 class Service {
@@ -13,23 +15,8 @@ class Service {
     // Start a transaction to ensure atomicity
     const result = await prisma.$transaction(async (prisma) => {
       // Fetch the event details to check maxAttendees and populate response
-      const event = await prisma.event.findUnique({
-        where: { id: payload.eventId },
-      });
-  
-      if (!event) {
-        throw new Error("Event not found!");
-      }
-  
-      if (event.maxAttendees <= 0) {
-        throw new Error("No seats available!");
-      }
-  
-      // Decrease maxAttendees count
-      const updatedEvent = await prisma.event.update({
-        where: { id: payload.eventId },
-        data: { maxAttendees: event.maxAttendees - 1 },
-      });
+     
+      const updatedEvent = await decreaseEventAttendee(payload.eventId);
   
       // Create the attendee
       const attendee = await prisma.attendee.create({
@@ -38,7 +25,22 @@ class Service {
           attendeeEmail: email,
         },
       });
-  
+      
+      // Emit event to notify about the new attendee
+    io.emit("new-attendee", {
+      eventId: payload.eventId,
+      attendee,
+      updatedEvent,
+    });
+
+    // If maxAttendees reaches 0, notify that the event is full
+    if (updatedEvent.maxAttendees === 0) {
+      io.emit("event-full", {
+        eventId: payload.eventId,
+        message: "The event has reached its maximum capacity!",
+      });
+    }
+
       // Return the attendee and updated event details
       return {
         attendee,
@@ -72,6 +74,10 @@ class Service {
       },
       data: payload,
     })
+    // Emit event to notify attendees about updates
+    io.emit("event-updated", {
+      result,
+    });
     return result
   }
 
