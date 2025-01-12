@@ -37,7 +37,7 @@ router.post(
   router.post(
     '/refresh-token',
     verifyToken,
-    validateAuthorization([Role.SUPER_ADMIN, Role.AGENT, Role.USER]),
+    validateAuthorization([Role.USER, Role.ATTENDEE]),
     AuthController.refreshToken,
   )
   
@@ -46,7 +46,7 @@ router.post(
   router.post(
     '/change-password',
     verifyToken,
-    validateAuthorization([Role.SUPER_ADMIN, Role.AGENT, Role.USER]),
+    validateAuthorization([Role.USER, Role.ATTENDEE]),
     validateRequest(authValidations.changePasswordValidation),
     AuthController.changePassword,
   )
@@ -56,7 +56,7 @@ router.post(
   router.patch(
     '/update',
     verifyToken,
-    validateAuthorization([Role.SUPER_ADMIN, Role.USER, Role.AGENT]),
+    validateAuthorization([Role.USER, Role.ATTENDEE]),
     upload.fields([
       { name: 'imageUrl', maxCount: 1 }
     ]),
