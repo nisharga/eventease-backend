@@ -119,8 +119,8 @@ export const generateActionLink = (
     case Role.ATTENDEE:
       frontendUrl =
         config.node_env !== 'development'
-          ? (config.verify_link.agent_verify_link as string)
-          : (config.verify_link.agent_production_url as string)
+          ? (config.verify_link.user_verify_link as string)
+          : (config.verify_link.user_verify_link as string)
       break 
     default:
       throw new Error('Invalid role!')
