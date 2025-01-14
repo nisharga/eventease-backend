@@ -114,7 +114,7 @@ export const generateActionLink = (
       frontendUrl =
         config.node_env !== 'development'
           ? (config.verify_link.user_verify_link as string)
-          : (config.verify_link.user_production_url as string)
+          : (config.verify_link.user_verify_link as string)
       break
     case Role.ATTENDEE:
       frontendUrl =
