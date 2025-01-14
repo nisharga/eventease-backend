@@ -34,7 +34,11 @@ APP_PORT = 465
 VERIFY_EMAIL_TOKEN = 19121ce9ceb41e3b4028d1746487824b7b73d8ee6e3988d6b8c4770c91362a2f
 VERIFY_EMAIL_LINK = http://localhost:5000
 VERIFY_EMAIL_EXP = 1d
+API_SECRET = VDb-Yzn5sfpIHijeCrwos19VGfQ
+
+# Frontend Link
 USER_FRONTEND_URL = http://localhost:3000
+USER_FRONTEND_PRODUCTION_URL = http://localhost:3000
 ```
 
 Follow the steps below to set up the project on your local machine:
